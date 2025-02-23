@@ -1,9 +1,8 @@
-const csv = require('csv-parser'); 
+const csv = require('csv-parser');
 const fs = require('fs');
 const Request = require('../models/Request');
 const Image = require('../models/Image');
 
-// Upload CSV and save image data
 const uploadCSV = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
