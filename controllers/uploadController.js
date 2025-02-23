@@ -18,9 +18,9 @@ const uploadCSV = async (req, res) => {
       .on('data', (row) => {
         images.push({
           requestId: request.requestId,
-          serialNumber: row['S. No.'],        // Match the CSV header exactly
-          productName: row['Product Name'],   // Match the CSV header exactly
-          inputUrl: row['Input Image Urls'],  // Match the CSV header exactly
+          serialNumber: row['S. No.'],        
+          productName: row['Product Name'],   
+          inputUrl: row['Input Image Urls'],  
         });
       })
       .on('end', async () => {
