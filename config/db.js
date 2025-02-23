@@ -9,6 +9,13 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
 
 module.exports = connectDB;
 
