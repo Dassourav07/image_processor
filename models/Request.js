@@ -1,9 +1,20 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
-const requestSchema = new mongoose.Schema({
-  requestId: { type: String, required: true, unique: true },
-  status: { type: String, enum: ['Pending', 'Completed', 'Failed', 'Partial'], default: 'Pending' },
-  createdAt: { type: Date, default: Date.now },
+const RequestSchema = new mongoose.Schema({
+  requestId: {
+    type: String,
+    default: uuidv4,
+    unique: true,
+  },
+  status: {
+    type: String,
+    default: 'Pending',
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model('Request', requestSchema);
+module.exports = mongoose.model('Request', RequestSchema);
