@@ -1,7 +1,7 @@
 const axios = require('axios');
 const sharp = require('sharp');
-const fs = require('fs');
 const Image = require('../models/Image');
+const Request = require('../models/Request');
 
 const processImages = async () => {
   const pendingImages = await Image.find({ status: 'Pending' });
@@ -29,6 +29,21 @@ const processImages = async () => {
       await img.save();
     }
   }
+
+  // Check and update request statuses
+  const requestIds = [...new Set(pendingImages.map(img => img.requestId))];
+  for (const requestId of requestIds) {
+    const images = await Image.find({ requestId });
+    const allCompleted = images.every(img => img.status === 'Completed');
+    const allFailed = images.every(img => img.status === 'Failed');
+    
+    let newStatus = 'Partial';
+    if (allCompleted) newStatus = 'Completed';
+    if (allFailed) newStatus = 'Failed';
+    
+    await Request.findOneAndUpdate({ requestId }, { status: newStatus });
+  }
 };
 
 module.exports = { processImages };
+
