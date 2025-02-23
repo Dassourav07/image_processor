@@ -25,11 +25,10 @@ const processImages = async () => {
       await img.save();
     } catch (error) {
       console.error(`Error processing image ${img.inputUrl}:`, error.message);
-      img.status = 'Failed';  // Update status to Failed on error
-      await img.save();
     }
   }
 };
 
 module.exports = { processImages };
+
 
