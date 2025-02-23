@@ -16,11 +16,15 @@ const uploadCSV = async (req, res) => {
     fs.createReadStream(req.file.path)
       .pipe(csv())
       .on('data', (row) => {
-        images.push({
-          requestId: request.requestId,
-          serialNumber: row['S. No.'],        
-          productName: row['Product Name'],   
-          inputUrl: row['Input Image Urls'],  
+        const urls = row['Input Image Urls'].split(','); // Split URLs
+        urls.forEach(url => {
+          images.push({
+            requestId: request.requestId,
+            serialNumber: row['S. No.'],
+            productName: row['Product Name'],
+            inputUrl: url.trim(),  // Trim to remove extra spaces
+            status: 'Pending',     // Set initial status
+          });
         });
       })
       .on('end', async () => {
@@ -39,4 +43,5 @@ const uploadCSV = async (req, res) => {
 };
 
 module.exports = { uploadCSV };
+
 
