@@ -9,31 +9,16 @@ const processImages = async () => {
 
   for (const img of pendingImages) {
     try {
-      console.log(`Processing Image: ${img.inputUrl}`);
-
-      // Validate the URL
-      if (!img.inputUrl.startsWith('https://')) {
-        console.error(`Invalid URL: ${img.inputUrl}`);
-        img.status = 'Failed';
-        await img.save();
-        continue;
-      }
-
       // Download the image
-      const response = await axios.get(img.inputUrl, { responseType: 'arraybuffer' });
-      const buffer = Buffer.from(response.data, 'binary');
+      const response = await axios({
+        url: img.inputUrl,
+        responseType: 'arraybuffer',
+      });
 
-      // Check image format
-      const metadata = await sharp(buffer).metadata();
-      if (!['jpeg', 'png', 'webp'].includes(metadata.format)) {
-        console.error(`Unsupported image format: ${metadata.format}`);
-        img.status = 'Failed';
-        await img.save();
-        continue;
-      }
+      const buffer = Buffer.from(response.data, 'binary');
+      const outputFileName = `public/images/${img.requestId}_${img.serialNumber}.jpg`;
 
       // Process and save the image
-      const outputFileName = `public/images/${img.requestId}_${img.serialNumber}.jpg`;
       await sharp(buffer)
         .jpeg({ quality: 50 })
         .toFile(outputFileName);
@@ -43,7 +28,7 @@ const processImages = async () => {
       img.status = 'Completed';
       await img.save();
     } catch (error) {
-      console.error(`Error processing image ${img.inputUrl}:`, error);
+      console.error(`Error processing image ${img.inputUrl}:`, error.message);
 
       // Mark the image as failed
       img.status = 'Failed';
@@ -64,10 +49,8 @@ const processImages = async () => {
     if (allFailed) newStatus = 'Failed';
 
     // Update the request status
-    await Request.findOneAndUpdate({ requestId }, { status: newStatus, updatedAt: new Date() });
+    await Request.findOneAndUpdate({ requestId }, { status: newStatus });
   }
 };
 
 module.exports = { processImages };
-
-
