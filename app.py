@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-BACKEND_URL = "https://image-processor-6dvl.onrender.com/"  # Replace with your backend URL
+BACKEND_URL = "https://image-processor-6dvl.onrender.com/"  
 
 st.title("Image Processing System")
 
